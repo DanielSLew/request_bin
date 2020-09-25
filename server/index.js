@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const createBin = async (req, res) => {
-  const pgDB = new pgClient({ database: 'request_bin' });
+  const pgDB = new pgClient({ database: 'daniel' });
 
   try {
     await pgDB.connect();
@@ -39,8 +39,8 @@ const captureEvent = async (req, res) => {
   try {
     await mongoDB.connect();
     await pgDB.connect();
-    const db = mongoDB.db('request_bin_clone');
-    const collection = db.collection('endpoints');
+    const db = mongoDB.db('events');
+    const collection = db.collection('data');
     const result = await collection.insertOne(req.body);
     pgDB.query('INSERT INTO events(bin_id, doc_id) VALUES($1, $2)', [bin, result.insertedId]);
     res.sendStatus(200);
