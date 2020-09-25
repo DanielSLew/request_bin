@@ -6,6 +6,13 @@ const { v4: uuidv4 } = require('uuid');
 let { MongoClient } = require('mongodb');
 
 const url = 'mongodb://127.0.0.1:27017';
+const pgConfig = {
+  user: 'daniel',
+  host: '127.0.0.1',
+  database: 'request_bin',
+  password: process.env.PG || 'database',
+  port: '5432'
+};
 
 const app = express();
 
@@ -15,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const createBin = async (req, res) => {
-  const pgDB = new pgClient({ database: 'daniel' });
+  const pgDB = new pgClient(pgConfig);
 
   try {
     await pgDB.connect();
@@ -32,7 +39,7 @@ const createBin = async (req, res) => {
 
 const captureEvent = async (req, res) => {
   const mongoDB = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
-  const pgDB = new pgClient({ database: 'daniel' });
+  const pgDB = new pgClient(pgConfig);
 
   const bin = req.body.bin_id;
 
