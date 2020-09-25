@@ -22,7 +22,7 @@ const createBin = async (req, res) => {
     const values = [req.body.name, uuidv4()];
     const result = await pgDB.query('INSERT INTO bins(name, path_name) VALUES($1, $2) RETURNING *', values);
     console.log(result);
-    res.json({ bin: values });
+    res.json({ bin: result.rows[0] });
   } catch (e) {
     console.error(e);
   } finally {
@@ -30,9 +30,9 @@ const createBin = async (req, res) => {
   }
 }
 
-const webhookHandler = async (req, res) => {
+const captureEvent = async (req, res) => {
   const mongoDB = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
-  const pgDB = new pgClient({ database: 'request_bin' });
+  const pgDB = new pgClient({ database: 'daniel' });
 
   const bin = req.body.bin_id;
 
@@ -91,7 +91,7 @@ const getData = async (req, res) => {
 
 app.get('/', getData)
 
-app.post('/event', webhookHandler);
+app.post('/event', captureEvent);
 
 app.post('/bin', createBin);
 
