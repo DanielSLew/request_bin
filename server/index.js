@@ -62,7 +62,7 @@ const captureEvent = async (req, res) => {
     const bin = await pgDB.query('SELECT id FROM bins WHERE path_name = $1', [bin_path]);
     const bin_id = bin.rows[0].id;
 
-    await collection.insertOne({ bin_id, ...req.body });
+    const result = await collection.insertOne({ bin_id, ...req.body });
     await pgDB.query('INSERT INTO events(bin_id, doc_id) VALUES($1, $2)', [bin_id, result.insertedId]);
     res.status(200);
   } catch (e) {
