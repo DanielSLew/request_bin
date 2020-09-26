@@ -6,5 +6,5 @@ CREATE TABLE bins (
 CREATE TABLE events (
   id serial PRIMARY KEY,
   bin_id integer NOT NULL REFERENCES bins (id),
-  doc_id integer
+  doc_id text
 );
