@@ -52,7 +52,7 @@ const captureEvent = async (req, res) => {
     console.error(e);
   } finally {
     await mongoDB.close();
-    await pgDM.end();
+    await pgDB.end();
 
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
