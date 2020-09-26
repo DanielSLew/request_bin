@@ -41,8 +41,11 @@ const createBin = async (req, res) => {
   } finally {
     await pgDB.end();
 
-    if (res.statusCode == 400) res.send();
-    res.json({ NEW_BIN_PATH: result.rows[0].path_name });
+    if (res.statusCode == 400) {
+      res.send();
+    } else {
+      res.json({ NEW_BIN_PATH: result.rows[0].path_name });
+    }
   }
 }
 
@@ -85,10 +88,15 @@ const getBins = async (req, res) => {
     result = await pgDB.query('SELECT * FROM bins');
   } catch (e) {
     console.error(e);
+    res.status(400);
   } finally {
     await pgDB.end();
 
-    result ? res.json({ 'ALL_BINS': result.rows }) : res.sendStatus(400);
+    if (res.statusCode == 400) 
+      res.send();
+    else {
+      res.json({ 'ALL_BINS': result.rows });
+    }
   }
 }
 
@@ -115,9 +123,11 @@ const getBinData = async (req, res) => {
     await mongoDB.close();
     await pgDB.end();
 
-    if (res.statusCode == 400) res.send();
-    
-    res.json({ ['BIN_' + bin_path]: collection });
+    if (res.statusCode == 400) 
+      res.send();
+    else {
+      res.json({ ['BIN_' + bin_path]: collection });
+    }
   }  
 }
 
