@@ -5,9 +5,10 @@ Hosted at http://142.93.151.31/ on a Digital Ocean VPS
 ### Infrastructure
 
 - Nginx reverse proxy handles all incoming requests
+- Simple node express server set to handle all requests
 - Mongo Database captures the event payloads
 - Postgres Database captures the bin information and the event relational data
-
+- For a test, I sit up github webhooks from this repo to be consumed.
 
 ### Use
 
