@@ -7,11 +7,7 @@ let { MongoClient } = require('mongodb');
 
 const url = 'mongodb://127.0.0.1:27017';
 const pgConfig = {
-  user: 'daniel',
-  host: '127.0.0.1',
   database: 'request_bin',
-  password: process.env.PG || 'database',
-  port: '5432'
 };
 
 const app = express();
