@@ -19,17 +19,18 @@ app.use(bodyParser.json());
 
 const createBin = async (req, res) => {
   const pgDB = new pgClient(pgConfig);
+  let result;
 
   try {
     await pgDB.connect();
     const values = [req.body.name, uuidv4()];
-    const result = await pgDB.query('INSERT INTO bins(name, path_name) VALUES($1, $2) RETURNING *', values);
-    console.log(result);
-    res.json({ bin: result.rows[0] });
+    result = await pgDB.query('INSERT INTO bins(name, path_name) VALUES($1, $2) RETURNING *', values);
   } catch (e) {
     console.error(e);
   } finally {
     await pgDB.end();
+
+    result ? res.json({ bin: result.rows[0] }) : res.sendStatus(400);
   }
 }
 
@@ -38,36 +39,39 @@ const captureEvent = async (req, res) => {
   const pgDB = new pgClient(pgConfig);
 
   const bin = req.body.bin_id;
+  let result;
 
   try {
     await mongoDB.connect();
     await pgDB.connect();
     const db = mongoDB.db('events');
     const collection = db.collection('data');
-    const result = await collection.insertOne(req.body);
-    pgDB.query('INSERT INTO events(bin_id, doc_id) VALUES($1, $2)', [bin, result.insertedId]);
-    res.sendStatus(200);
+    result = await collection.insertOne(req.body);
+    result = pgDB.query('INSERT INTO events(bin_id, doc_id) VALUES($1, $2)', [bin, result.insertedId]);
   } catch (e) {
     console.error(e);
   } finally {
     await mongoDB.close();
     await pgDM.end();
+
+    result ? res.sendStatus(200) : res.sendStatus(400);
   }
 }
 
 const getData = async (req, res) => {
   const mongoClient = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+  let collection;
 
   try {
     await mongoClient.connect();
     const db = mongoClient.db('request_bin_clone');
-    const collection = await db.collection('endpoints').find().toArray();
-    console.log(collection);
-    res.json(collection);
+    collection = await db.collection('endpoints').find().toArray();
   } catch (e) {
     console.error(e);
   } finally {
     await mongoClient.close();
+    
+    collection ? res.json(collection) : res.sendStatus(400);
   }  
 }
 
