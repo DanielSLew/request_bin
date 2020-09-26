@@ -59,13 +59,14 @@ const captureEvent = async (req, res) => {
 }
 
 const getData = async (req, res) => {
+  console.log(url, pgConfig);
   const mongoClient = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
   let collection;
 
   try {
     await mongoClient.connect();
-    const db = mongoClient.db('request_bin_clone');
-    collection = await db.collection('endpoints').find().toArray();
+    const db = mongoClient.db('events');
+    collection = await db.collection('data').find().toArray();
   } catch (e) {
     console.error(e);
   } finally {
