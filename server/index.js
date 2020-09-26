@@ -5,14 +5,14 @@ const { v4: uuidv4 } = require('uuid');
 
 let { MongoClient } = require('mongodb');
 
-const url = 'mongodb://127.0.0.1:27017';
+const url = process.env.MONGO_URL;
 const pgConfig = {
-  database: 'request_bin',
+  database: process.env.DATABASE,
 };
 
 const app = express();
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -51,6 +51,7 @@ const captureEvent = async (req, res) => {
     console.error(e);
   } finally {
     await mongoDB.close();
+    await pgDM.end();
   }
 }
 
